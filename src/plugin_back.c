@@ -458,6 +458,15 @@ static int pb_commandIsValid(int Control, unsigned char *Command)
 	return 1;
 }
 
+#ifdef TWOP_SWITCHER
+void switch_controller_ports(void) {
+	DebugMessage(PB_MSG_INFO, "Switched! %d\n", g_channels[0].chn);
+	g_channels[0].chn = (g_channels[0].chn + 1) % 2;
+}
+
+int can_switch = 1;
+#endif
+
 int pb_readController(int Control, unsigned char *Command)
 {
 	struct rawChannel *channel;
@@ -495,6 +504,19 @@ int pb_readController(int Control, unsigned char *Command)
 		biops[adap->n_ops].rx_len = Command[1] & BIO_RXTX_MASK;
 		biops[adap->n_ops].tx_data = Command + 2;
 		biops[adap->n_ops].rx_data = Command + 2 + biops[adap->n_ops].tx_len;
+
+		#ifdef TWOP_SWITCHER
+		if (biops[adap->n_ops].rx_data[0] == 0x20 && biops[adap->n_ops].rx_data[1] == 0x30) {
+			if (can_switch) {
+				can_switch = 0;
+				switch_controller_ports();
+			}
+		} else {
+			if (biops[adap->n_ops].rx_data[0] || biops[adap->n_ops].rx_data[1]) {
+				can_switch = 1;
+			}
+		}
+		#endif
 
 		if (biops[adap->n_ops].tx_len == 0 || biops[adap->n_ops].rx_len == 0) {
 			DebugMessage(PB_MSG_WARNING, "TX or RX was zero");

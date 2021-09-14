@@ -34,6 +34,10 @@ Then in project64, go to `menu bar` -> `Options` -> `Settings` -> `Plugins`. Nex
 `Input (controller) plugin` dropdown, select "raphnetraw for Project64 version xx.xx".
 Apply and exit the dialog box.
 
+## 2pswitch info
+
+To switch controllers, you need the 2 player N64 model of the raphnet adapter. When you are ready to switch controllers, press Z+L+R all at the same time. This will immediately pass input to the controller you have plugged into the other port (Port 0 starts as default.)
+
 ## Building the plugin
 
 The plugin is compiled using mingw-w64 under Linux.
