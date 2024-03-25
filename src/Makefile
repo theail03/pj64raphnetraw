@@ -57,7 +57,7 @@ objs/%.o: %.c
 	$(CC) $(CFLAGS) -c $^ -o $@
 
 objs_2pswitch/%.o: %.c
-	$(CC) $(CFLAGS) -c $^ -o $@ -DTWOP_SWITCHER
+	$(CC) $(CFLAGS) -c $^ -o $@ -DTWOP_SWITCHER -DWITH_DEBUG_LOG
 
 objs_p1and4/%.o: %.c
 	$(CC) $(CFLAGS) -c $^ -o $@ -DPORTS_1_AND_4
