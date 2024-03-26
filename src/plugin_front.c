@@ -215,6 +215,25 @@ EXPORT void CALL DllConfig ( HWND hParent )
 					"The controller will work, respond and feel exactly as it would in real life.\n\n"
 					"Controller ports detected: %d", n_controllers);
 
+	#ifdef TWOP_SWITCHER
+	EnterCriticalSection( &g_critical );
+	int new_channel = switch_controller_ports();
+	LeaveCriticalSection( &g_critical );
+
+	// First, create a message about the port switch
+	char port_switch_message[256];
+	snprintf(port_switch_message, sizeof(port_switch_message), 
+			"Controller ports have been switched. Current port: %d.", new_channel);
+
+	// Append the port switch message to tmpbuf first
+	strncat(tmpbuf, "\n\n", sizeof(tmpbuf) - strlen(tmpbuf) - 1); // Add some spacing
+	strncat(tmpbuf, port_switch_message, sizeof(tmpbuf) - strlen(tmpbuf) - 1);
+
+	// Now add the explanation about how to switch ports
+	strncat(tmpbuf, "\n\nClicking 'Configure Controller Plugin' switches the controller ports when using this plugin.", 
+			sizeof(tmpbuf) - strlen(tmpbuf) - 1); // Ensure not to overflow the buffer
+	#endif
+
 	MessageBox( hParent, tmpbuf, "Raphnetraw Configuration", MB_OK | MB_ICONINFORMATION);
 
 	return;

@@ -104,6 +104,10 @@ struct rawChannel {
 static struct rawChannel g_channels[MAX_CHANNELS] = { };
 static int g_n_channels = 0;
 
+#ifdef TWOP_SWITCHER
+static int current_channel = 0; 
+#endif
+
 int pb_init(pb_debugFunc debugFn)
 {
 	DebugMessage = debugFn;
@@ -459,9 +463,11 @@ static int pb_commandIsValid(int Control, unsigned char *Command)
 }
 
 #ifdef TWOP_SWITCHER
-void switch_controller_ports(void) {
-	DebugMessage(PB_MSG_INFO, "Switched! %d\n", g_channels[0].chn);
-	g_channels[0].chn = (g_channels[0].chn + 1) % 2;
+int switch_controller_ports(void) {
+	DebugMessage(PB_MSG_INFO, "Switched! %d\n", current_channel);
+	g_channels[0].chn = (current_channel  + 1) % 2;
+	current_channel = g_channels[0].chn;
+	return current_channel; 
 }
 
 int can_switch = 1;
