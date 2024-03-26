@@ -464,12 +464,13 @@ static int pb_commandIsValid(int Control, unsigned char *Command)
 }
 
 #ifdef TWOP_SWITCHER
-void switch_controller_ports(void) {
+int switch_controller_ports(void) {
 	DebugMessage(PB_MSG_INFO, "Switched! %d\n", current_channel);
 	DebugMessage(PB_MSG_INFO, "Operation: %d\n", (current_channel + 1) % 2);
 	g_channels[0].chn = (current_channel + 1) % 2;
 	current_channel = g_channels[0].chn;
 	DebugMessage(PB_MSG_INFO, "Result: %d\n", g_channels[0].chn);
+	return current_channel;
 }
 
 int can_switch = 1;

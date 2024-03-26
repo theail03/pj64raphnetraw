@@ -217,10 +217,20 @@ EXPORT void CALL DllConfig ( HWND hParent )
 
 	#ifdef TWOP_SWITCHER
 	EnterCriticalSection( &g_critical );
-	switch_controller_ports();
+	int new_channel = switch_controller_ports();
 	LeaveCriticalSection( &g_critical );
 
-	strncat(tmpbuf, "\n\nControllers have been switched by clicking 'Configure Controller Plugin'.", 
+	// First, create a message about the port switch
+	char port_switch_message[256];
+	snprintf(port_switch_message, sizeof(port_switch_message), 
+			"Controller ports have been switched. Current port: %d.", new_channel);
+
+	// Append the port switch message to tmpbuf first
+	strncat(tmpbuf, "\n\n", sizeof(tmpbuf) - strlen(tmpbuf) - 1); // Add some spacing
+	strncat(tmpbuf, port_switch_message, sizeof(tmpbuf) - strlen(tmpbuf) - 1);
+
+	// Now add the explanation about how to switch ports
+	strncat(tmpbuf, "\n\nClicking 'Configure Controller Plugin' switches the controller ports when using this plugin.", 
 			sizeof(tmpbuf) - strlen(tmpbuf) - 1); // Ensure not to overflow the buffer
 	#endif
 
