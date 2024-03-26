@@ -104,6 +104,16 @@ struct rawChannel {
 static struct rawChannel g_channels[MAX_CHANNELS] = { };
 static int g_n_channels = 0;
 
+#ifdef TWOP_SWITCHER
+// Global variable
+static int switch_pending = 0; // 0 means false, 1 means true
+
+// Function to set the switch_pending flag
+void set_switch_pending(void) {
+    switch_pending = 1;
+}
+#endif
+
 int pb_init(pb_debugFunc debugFn)
 {
 	DebugMessage = debugFn;
@@ -461,7 +471,9 @@ static int pb_commandIsValid(int Control, unsigned char *Command)
 #ifdef TWOP_SWITCHER
 void switch_controller_ports(void) {
 	DebugMessage(PB_MSG_INFO, "Switched! %d\n", g_channels[0].chn);
+	DebugMessage(PB_MSG_INFO, "Operation: %d\n", (g_channels[0].chn + 1) % 2);
 	g_channels[0].chn = (g_channels[0].chn + 1) % 2;
+	DebugMessage(PB_MSG_INFO, "Result: %d\n", g_channels[0].chn);
 }
 
 int can_switch = 1;
@@ -506,6 +518,10 @@ int pb_readController(int Control, unsigned char *Command)
 		biops[adap->n_ops].rx_data = Command + 2 + biops[adap->n_ops].tx_len;
 
 		#ifdef TWOP_SWITCHER
+		if (switch_pending) {
+			switch_controller_ports();  // Call the switch function
+			switch_pending = 0;         // Reset the flag after switching
+		}
 		if (biops[adap->n_ops].rx_data[0] == 0x20 && biops[adap->n_ops].rx_data[1] == 0x30) {
 			if (can_switch) {
 				can_switch = 0;

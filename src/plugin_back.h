@@ -17,6 +17,9 @@ int pb_readController(int Control, unsigned char *Command);
 int pb_controllerCommand(int Control, unsigned char *Command);
 int pb_romOpen(void);
 int pb_romClosed(void);
+#ifdef TWOP_SWITCHER
+void set_switch_pending(void);  // Function declaration
+#endif
 
 #endif // _plugin_back_h__
 

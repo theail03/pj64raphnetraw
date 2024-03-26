@@ -215,6 +215,13 @@ EXPORT void CALL DllConfig ( HWND hParent )
 					"The controller will work, respond and feel exactly as it would in real life.\n\n"
 					"Controller ports detected: %d", n_controllers);
 
+	#ifdef TWOP_SWITCHER
+	set_switch_pending();
+
+	strncat(tmpbuf, "\n\nControllers have been switched by clicking 'Configure Controller Plugin'.", 
+			sizeof(tmpbuf) - strlen(tmpbuf) - 1); // Ensure not to overflow the buffer
+	#endif
+
 	MessageBox( hParent, tmpbuf, "Raphnetraw Configuration", MB_OK | MB_ICONINFORMATION);
 
 	return;
@@ -304,6 +311,7 @@ EXPORT void CALL RomClosed(void)
 
 EXPORT void CALL GetKeys(int Control, BUTTONS * Keys )
 {
+	DebugWriteA("CALLED: GetKeys\n");
 }
 
 EXPORT void CALL ControllerCommand( int Control, BYTE * Command)
@@ -320,11 +328,13 @@ EXPORT void CALL ReadController( int Control, BYTE * Command )
 
 EXPORT void CALL WM_KeyDown( WPARAM wParam, LPARAM lParam )
 {
+	DebugWriteA("CALLED: WM_KeyDown\n");
 	return;
 }
 
 EXPORT void CALL WM_KeyUp( WPARAM wParam, LPARAM lParam )
 {
+	DebugWriteA("CALLED: WM_KeyUp\n");
 	return;
 }
 
