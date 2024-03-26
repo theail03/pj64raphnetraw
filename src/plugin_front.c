@@ -216,7 +216,9 @@ EXPORT void CALL DllConfig ( HWND hParent )
 					"Controller ports detected: %d", n_controllers);
 
 	#ifdef TWOP_SWITCHER
-	set_switch_pending();
+	EnterCriticalSection( &g_critical );
+	switch_controller_ports();
+	LeaveCriticalSection( &g_critical );
 
 	strncat(tmpbuf, "\n\nControllers have been switched by clicking 'Configure Controller Plugin'.", 
 			sizeof(tmpbuf) - strlen(tmpbuf) - 1); // Ensure not to overflow the buffer
